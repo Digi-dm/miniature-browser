@@ -480,10 +480,16 @@
 <script type="module">
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 // ─── Config ────────────────────────────────────────────────────
 const CDN_BASE = 'https://cdn.jsdelivr.net/gh/theripper93/canvas3dtokencompendium@master/miniatures/_Colorized/';
+const DRACO_PATH = 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/';
+
+// Shared DRACOLoader instance (reused for all GLB loads)
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath(DRACO_PATH);
 const MAX_CARD_RENDERERS = 8; // max concurrent card WebGL contexts
 
 // ─── State ─────────────────────────────────────────────────────
@@ -573,6 +579,7 @@ function startCardRender(el, path) {
   const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 1000);
 
   const loader = new GLTFLoader();
+  loader.setDRACOLoader(dracoLoader);
   const url = CDN_BASE + path.split('/').map(encodeURIComponent).join('/');
 
   let rotY = 0;
@@ -697,6 +704,7 @@ function openModal(model) {
 
   const url = CDN_BASE + model.path.split('/').map(encodeURIComponent).join('/');
   const loader = new GLTFLoader();
+  loader.setDRACOLoader(dracoLoader);
   loader.load(url, (gltf) => {
     modalScene.add(gltf.scene);
     const { center } = fitModelToCamera(gltf.scene, camera);
@@ -844,16 +852,4 @@ async function init() {
     // Initial render
     applyFilters();
 
-    // Hide loading overlay
-    document.getElementById('loading-overlay').style.display = 'none';
-  } catch (err) {
-    console.error('Init error:', err);
-    document.getElementById('loading-overlay').innerHTML =
-      `<div style="color:#f87171;font-size:1.1rem">❌ Failed to load manifest.json<br><small>${err.message}</small></div>`;
-  }
-}
-
-init();
-</script>
-</body>
-</html>
+    /
