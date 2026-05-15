@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>DigiDM Miniature Browser</title>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f1a;
+      --surface: #1a1a2e;
+      --surface2: #16213e;
+      --accent: #7c3aed;
+      --accent2: #a855f7;
+      --gold: #f59e0b;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --border: #2d2d4e;
+      --card-bg: #1e1e35;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.5);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15,15,26,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .logo {
+      font-size: 1.2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent2), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .logo span { font-size: 0.75rem; opacity: 0.7; display: block; -webkit-text-fill-color: var(--text-muted); background: none; }
+
+    .search-wrap {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    #search {
+      width: 100%;
+      padding: 9px 12px 9px 34px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    #search:focus { border-color: var(--accent); }
+    #search::placeholder { color: var(--text-muted); }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .filters::-webkit-scrollbar { display: none; }
+
+    #folder-select {
+      flex-shrink: 0;
+      padding: 7px 28px 7px 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.85rem;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      cursor: pointer;
+      min-width: 160px;
+      max-width: 220px;
+    }
+
+    #folder-select:focus { border-color: var(--accent); }
+
+    #sort-select {
+      flex-shrink: 0;
+      padding: 7px 28px 7px 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.85rem;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      cursor: pointer;
+    }
+
+    #count-bar {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      padding: 6px 16px 4px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Grid ── */
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 12px;
+    }
+
+    @media (min-width: 500px) { #grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 720px) { #grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (min-width: 960px) { #grid { grid-template-columns: repeat(5, 1fr); gap: 14px; padding: 14px; } }
+    @media (min-width: 1200px) { #grid { grid-template-columns: repeat(6, 1fr); } }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      box-shadow: 0 0 16px rgba(124,58,237,0.3);
+    }
+
+    .card:active { transform: scale(0.97); }
+
+    .canvas-wrap {
+      width: 100%;
+      aspect-ratio: 1;
+      background: radial-gradient(ellipse at center, #1a1040 0%, #0a0a18 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    .card-loader {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(124,58,237,0.2);
+      border-top-color: var(--accent2);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .card-loader .dice-icon {
+      font-size: 2rem;
+      opacity: 0.3;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse { 0%,100% { opacity:0.2; transform:scale(0.95); } 50% { opacity:0.5; transform:scale(1.05); } }
+
+    .error-icon {
+      font-size: 1.5rem;
+      opacity: 0.4;
+    }
+
+    .card-info {
+      padding: 8px 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .card-name {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+
+    .card-folder {
+      font-size: 0.65rem;
+      color: var(--accent2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+      opacity: 0.8;
+    }
+
+    /* ── Modal ── */
+    #modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    #modal.open { display: flex; }
+
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .modal-header {
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+    }
+
+    .modal-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .modal-subtitle {
+      font-size: 0.8rem;
+      color: var(--accent2);
+      margin-top: 2px;
+    }
+
+    .modal-close {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: var(--text);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.15); }
+
+    #modal-canvas-wrap {
+      flex: 1;
+      min-height: 280px;
+      background: radial-gradient(ellipse at center, #1a1040 0%, #08080f 100%);
+      position: relative;
+    }
+
+    #modal-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+    }
+
+    .modal-footer {
+      padding: 10px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .modal-hint {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .modal-copy {
+      background: var(--accent);
+      border: none;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+    .modal-copy:hover { background: var(--accent2); }
+
+    .modal-loader {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at center, #1a1040 0%, #08080f 100%);
+    }
+
+    /* ── Empty state ── */
+    #empty {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    #empty.show { display: block; }
+    #empty .empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
+    #empty p { font-size: 0.9rem; }
+
+    /* ── Loading overlay ── */
+    #loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    #loading-overlay .big-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(124,58,237,0.2);
+      border-top-color: var(--accent2);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    #loading-overlay p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    #loading-overlay .logo-big {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent2), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<div id="loading-overlay">
+  <div class="logo-big">⚔️ DigiDM</div>
+  <div class="big-spinner"></div>
+  <p>Loading miniature library…</p>
+</div>
+
+<header>
+  <div class="header-top">
+    <div class="logo">⚔️ DigiDM<span>Miniature Browser</span></div>
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input id="search" type="search" placeholder="Search models…" autocomplete="off" autocorrect="off" spellcheck="false">
+    </div>
+  </div>
+  <div class="filters">
+    <select id="folder-select"><option value="">All Sourcebooks</option></select>
+    <select id="sort-select">
+      <option value="az">A → Z</option>
+      <option value="za">Z → A</option>
+      <option value="folder">By Sourcebook</option>
+    </select>
+  </div>
+</header>
+
+<div id="count-bar">Loading…</div>
+
+<div id="grid"></div>
+<div id="empty"><div class="empty-icon">🔍</div><p>No miniatures match your search.</p></div>
+
+<!-- Modal -->
+<div id="modal" role="dialog" aria-modal="true" aria-label="3D Model Viewer">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-name"></div>
+        <div class="modal-subtitle" id="modal-folder"></div>
+      </div>
+      <button class="modal-close" id="modal-close-btn" aria-label="Close">✕</button>
+    </div>
+    <div id="modal-canvas-wrap">
+      <canvas id="modal-canvas"></canvas>
+      <div class="modal-loader" id="modal-loader"><div class="spinner"></div></div>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-hint">🖱 Drag to rotate · Scroll to zoom</span>
+      <button class="modal-copy" id="copy-path-btn">Copy Path</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ─── Config ────────────────────────────────────────────────────
+const CDN_BASE = 'https://cdn.jsdelivr.net/gh/theripper93/canvas3dtokencompendium@master/miniatures/_Colorized/';
+const MAX_CARD_RENDERERS = 8; // max concurrent card WebGL contexts
+
+// ─── State ─────────────────────────────────────────────────────
+let allModels = [];
+let filtered = [];
+let activeCardRenderers = new Map(); // el -> {renderer, animId}
+let modalScene = null, modalRenderer = null, modalControls = null, modalAnimId = null;
+let currentModalPath = null;
+
+// ─── Fetch manifest ─────────────────────────────────────────────
+async function loadManifest() {
+  const resp = await fetch('manifest.json');
+  if (!resp.ok) throw new Error('Failed to load manifest.json');
+  return resp.json();
+}
+
+// ─── Three.js helpers ──────────────────────────────────────────
+function makeScene() {
+  const scene = new THREE.Scene();
+  // Ambient + directional lights
+  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+  const d1 = new THREE.DirectionalLight(0xffffff, 1.2);
+  d1.position.set(3, 5, 3);
+  scene.add(d1);
+  const d2 = new THREE.DirectionalLight(0x8888ff, 0.4);
+  d2.position.set(-3, 2, -3);
+  scene.add(d2);
+  return scene;
+}
+
+function makeRenderer(canvas, w, h, lowPower = false) {
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: !lowPower,
+    alpha: true,
+    powerPreference: lowPower ? 'low-power' : 'high-performance',
+  });
+  renderer.setSize(w, h, false);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, lowPower ? 1.5 : 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.2;
+  return renderer;
+}
+
+function fitModelToCamera(object, camera) {
+  const box = new THREE.Box3().setFromObject(object);
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const fov = camera.fov * (Math.PI / 180);
+  const dist = (maxDim / 2) / Math.tan(fov / 2) * 1.6;
+  camera.position.set(center.x, center.y + size.y * 0.1, center.z + dist);
+  camera.lookAt(center);
+  object.position.sub(center);
+  return { center, dist };
+}
+
+// ─── Card renderer ─────────────────────────────────────────────
+function disposeCardRenderer(el) {
+  const rec = activeCardRenderers.get(el);
+  if (!rec) return;
+  cancelAnimationFrame(rec.animId);
+  rec.renderer.dispose();
+  activeCardRenderers.delete(el);
+}
+
+function startCardRender(el, path) {
+  if (activeCardRenderers.has(el)) return;
+
+  // Enforce cap: dispose oldest if needed
+  if (activeCardRenderers.size >= MAX_CARD_RENDERERS) {
+    const oldest = activeCardRenderers.keys().next().value;
+    disposeCardRenderer(oldest);
+  }
+
+  const wrap = el.querySelector('.canvas-wrap');
+  const loaderEl = el.querySelector('.card-loader');
+  const canvas = el.querySelector('canvas');
+  if (!canvas || !wrap) return;
+
+  const W = wrap.offsetWidth || 160;
+  const H = W;
+
+  const renderer = makeRenderer(canvas, W, H, true);
+  const scene = makeScene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 1000);
+
+  const loader = new GLTFLoader();
+  const url = CDN_BASE + path.split('/').map(encodeURIComponent).join('/');
+
+  let rotY = 0;
+  let animId;
+  const rec = { renderer, animId: null };
+  activeCardRenderers.set(el, rec);
+
+  loader.load(url, (gltf) => {
+    if (!activeCardRenderers.has(el)) { gltf.scene.traverse(o => { if (o.isMesh) { o.geometry?.dispose(); } }); return; }
+    scene.add(gltf.scene);
+    fitModelToCamera(gltf.scene, camera);
+    if (loaderEl) loaderEl.style.display = 'none';
+
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      rec.animId = animId;
+      rotY += 0.012;
+      gltf.scene.rotation.y = rotY;
+      renderer.render(scene, camera);
+    }
+    animate();
+  }, undefined, (err) => {
+    console.warn('Card load error:', path, err);
+    if (loaderEl) {
+      loaderEl.innerHTML = '<span class="error-icon">⚠️</span>';
+    }
+  });
+}
+
+// ─── IntersectionObserver for lazy card loading ─────────────────
+const cardObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const el = entry.target;
+    if (entry.isIntersecting) {
+      const path = el.dataset.path;
+      if (path && !el.dataset.loaded) {
+        el.dataset.loaded = '1';
+        startCardRender(el, path);
+      }
+    } else {
+      // Dispose when scrolled far out
+      if (entry.intersectionRatio === 0 && el.dataset.loaded) {
+        disposeCardRenderer(el);
+      }
+    }
+  });
+}, { rootMargin: '120px 0px', threshold: [0, 0.1] });
+
+// ─── Modal viewer ──────────────────────────────────────────────
+function initModalRenderer() {
+  if (modalRenderer) return;
+  const canvas = document.getElementById('modal-canvas');
+  const wrap = document.getElementById('modal-canvas-wrap');
+  const W = wrap.clientWidth || 400;
+  const H = wrap.clientHeight || 360;
+
+  modalRenderer = makeRenderer(canvas, W, H, false);
+  modalRenderer.setSize(W, H);
+
+  // Handle resize
+  const ro = new ResizeObserver(() => {
+    if (!modalRenderer) return;
+    const w = wrap.clientWidth;
+    const h = wrap.clientHeight;
+    modalRenderer.setSize(w, h);
+    if (modalScene) {
+      const cam = modalScene.userData.camera;
+      if (cam) { cam.aspect = w / h; cam.updateProjectionMatrix(); }
+    }
+  });
+  ro.observe(wrap);
+}
+
+function openModal(model) {
+  const modal = document.getElementById('modal');
+  document.getElementById('modal-name').textContent = model.name;
+  const folderText = model.subfolder ? `${model.folder} › ${model.subfolder}` : model.folder;
+  document.getElementById('modal-folder').textContent = folderText;
+  document.getElementById('modal-loader').style.display = 'flex';
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  currentModalPath = model.path;
+
+  initModalRenderer();
+
+  // Clear previous scene
+  if (modalAnimId) cancelAnimationFrame(modalAnimId);
+  if (modalScene) {
+    modalScene.traverse(o => {
+      if (o.isMesh) { o.geometry?.dispose(); if (o.material) { [].concat(o.material).forEach(m => m.dispose()); } }
+    });
+    while (modalScene.children.length) modalScene.remove(modalScene.children[0]);
+  } else {
+    modalScene = makeScene();
+  }
+
+  // Add lights to fresh scene
+  if (!modalScene.children.length) {
+    modalScene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const d1 = new THREE.DirectionalLight(0xffffff, 1.4);
+    d1.position.set(3, 5, 3);
+    modalScene.add(d1);
+    const d2 = new THREE.DirectionalLight(0x8888ff, 0.4);
+    d2.position.set(-3, 2, -3);
+    modalScene.add(d2);
+  }
+
+  const wrap = document.getElementById('modal-canvas-wrap');
+  const W = wrap.clientWidth || 400;
+  const H = wrap.clientHeight || 360;
+  const camera = new THREE.PerspectiveCamera(45, W / H, 0.01, 1000);
+  modalScene.userData.camera = camera;
+
+  if (modalControls) modalControls.dispose();
+  modalControls = new OrbitControls(camera, document.getElementById('modal-canvas'));
+  modalControls.enableDamping = true;
+  modalControls.dampingFactor = 0.08;
+  modalControls.minDistance = 0.3;
+  modalControls.maxDistance = 50;
+  modalControls.autoRotate = true;
+  modalControls.autoRotateSpeed = 1.2;
+
+  const url = CDN_BASE + model.path.split('/').map(encodeURIComponent).join('/');
+  const loader = new GLTFLoader();
+  loader.load(url, (gltf) => {
+    modalScene.add(gltf.scene);
+    const { center } = fitModelToCamera(gltf.scene, camera);
+    modalControls.target.copy(new THREE.Vector3(0, 0, 0));
+    modalControls.update();
+    document.getElementById('modal-loader').style.display = 'none';
+
+    function animate() {
+      modalAnimId = requestAnimationFrame(animate);
+      modalControls.update();
+      modalRenderer.render(modalScene, camera);
+    }
+    animate();
+  }, undefined, (err) => {
+    console.error('Modal load error:', model.path, err);
+    document.getElementById('modal-loader').innerHTML = '<span style="font-size:2rem;opacity:0.5">⚠️ Failed to load</span>';
+  });
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+  if (modalAnimId) { cancelAnimationFrame(modalAnimId); modalAnimId = null; }
+  if (modalControls) { modalControls.dispose(); modalControls = null; }
+}
+
+// ─── Grid rendering ────────────────────────────────────────────
+function createCard(model) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.path = model.path;
+  card.innerHTML = `
+    <div class="canvas-wrap">
+      <canvas></canvas>
+      <div class="card-loader"><span class="dice-icon">🎲</span></div>
+    </div>
+    <div class="card-info">
+      <div class="card-name" title="${model.name.replace(/"/g,'&quot;')}">${model.name}</div>
+      <div class="card-folder">${model.folder}</div>
+    </div>`;
+  card.addEventListener('click', () => openModal(model));
+  return card;
+}
+
+let renderBatchId = null;
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('empty');
+  const countBar = document.getElementById('count-bar');
+
+  // Disconnect all observers
+  cardObserver.disconnect();
+  // Dispose all card renderers
+  for (const [el] of activeCardRenderers) disposeCardRenderer(el);
+  activeCardRenderers.clear();
+
+  grid.innerHTML = '';
+
+  if (filtered.length === 0) {
+    empty.classList.add('show');
+    countBar.textContent = 'No miniatures found.';
+    return;
+  }
+
+  empty.classList.remove('show');
+  countBar.textContent = `Showing ${filtered.length.toLocaleString()} of ${allModels.length.toLocaleString()} miniatures`;
+
+  const fragment = document.createDocumentFragment();
+  filtered.forEach(model => {
+    const card = createCard(model);
+    fragment.appendChild(card);
+  });
+  grid.appendChild(fragment);
+
+  // Observe all cards
+  grid.querySelectorAll('.card').forEach(c => cardObserver.observe(c));
+}
+
+// ─── Filtering & sorting ───────────────────────────────────────
+function applyFilters() {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const folder = document.getElementById('folder-select').value;
+  const sort = document.getElementById('sort-select').value;
+
+  filtered = allModels.filter(m => {
+    if (folder && m.folder !== folder) return false;
+    if (q && !m.name.toLowerCase().includes(q) && !m.folder.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  filtered.sort((a, b) => {
+    if (sort === 'az') return a.name.localeCompare(b.name);
+    if (sort === 'za') return b.name.localeCompare(a.name);
+    if (sort === 'folder') return a.folder.localeCompare(b.folder) || a.name.localeCompare(b.name);
+    return 0;
+  });
+
+  renderGrid();
+}
+
+let debounceTimer;
+function debounce(fn, ms) {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(fn, ms);
+}
+
+// ─── Init ──────────────────────────────────────────────────────
+async function init() {
+  try {
+    allModels = await loadManifest();
+    filtered = [...allModels];
+
+    // Populate folder dropdown
+    const folders = [...new Set(allModels.map(m => m.folder))].sort();
+    const sel = document.getElementById('folder-select');
+    folders.forEach(f => {
+      const opt = document.createElement('option');
+      opt.value = f;
+      opt.textContent = f;
+      sel.appendChild(opt);
+    });
+
+    // Wire up controls
+    document.getElementById('search').addEventListener('input', () => debounce(applyFilters, 180));
+    document.getElementById('folder-select').addEventListener('change', applyFilters);
+    document.getElementById('sort-select').addEventListener('change', applyFilters);
+
+    // Modal close
+    document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+    document.getElementById('modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    // Copy path button
+    document.getElementById('copy-path-btn').addEventListener('click', () => {
+      if (!currentModalPath) return;
+      const url = CDN_BASE + currentModalPath.split('/').map(encodeURIComponent).join('/');
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById('copy-path-btn');
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => btn.textContent = 'Copy Path', 1800);
+      });
+    });
+
+    // Initial render
+    applyFilters();
+
+    // Hide loading overlay
+    document.getElementById('loading-overlay').style.display = 'none';
+  } catch (err) {
+    console.error('Init error:', err);
+    document.getElementById('loading-overlay').innerHTML =
+      `<div style="color:#f87171;font-size:1.1rem">❌ Failed to load manifest.json<br><small>${err.message}</small></div>`;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
