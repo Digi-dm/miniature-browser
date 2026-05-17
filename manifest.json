@@ -210,6 +210,12 @@
     "path": "Adventurers/MZ4250 - Goliath Barbarian with Maul.glb"
   },
   {
+    "name": "MZ4250 - Half Orc Female Barbarian_blue_WarriorAxe",
+    "folder": "Adventurers",
+    "subfolder": "",
+    "path": "Adventurers/MZ4250 - Half Orc Female Barbarian_blue_WarriorAxe.glb"
+  },
+  {
     "name": "MZ4250 - Half Orc Female Barbarian_blue_glaive",
     "folder": "Adventurers",
     "subfolder": "",
@@ -228,10 +234,10 @@
     "path": "Adventurers/MZ4250 - Half Orc Female Barbarian_blue_staff.glb"
   },
   {
-    "name": "MZ4250 - Half Orc Female Barbarian_blue_WarriorAxe",
+    "name": "MZ4250 - Half Orc Female Barbarian_red_WarriorAxe",
     "folder": "Adventurers",
     "subfolder": "",
-    "path": "Adventurers/MZ4250 - Half Orc Female Barbarian_blue_WarriorAxe.glb"
+    "path": "Adventurers/MZ4250 - Half Orc Female Barbarian_red_WarriorAxe.glb"
   },
   {
     "name": "MZ4250 - Half Orc Female Barbarian_red_glaive",
@@ -250,12 +256,6 @@
     "folder": "Adventurers",
     "subfolder": "",
     "path": "Adventurers/MZ4250 - Half Orc Female Barbarian_red_staff.glb"
-  },
-  {
-    "name": "MZ4250 - Half Orc Female Barbarian_red_WarriorAxe",
-    "folder": "Adventurers",
-    "subfolder": "",
-    "path": "Adventurers/MZ4250 - Half Orc Female Barbarian_red_WarriorAxe.glb"
   },
   {
     "name": "MZ4250 - Half Orc Paladin",
@@ -444,12 +444,6 @@
     "path": "Adventurers/MZ4250 - Minotaur Monk.glb"
   },
   {
-    "name": "MZ4250 - Minotaur on a Buffalo",
-    "folder": "Adventurers",
-    "subfolder": "",
-    "path": "Adventurers/MZ4250 - Minotaur on a Buffalo.glb"
-  },
-  {
     "name": "MZ4250 - Minotaur Wizard Staff",
     "folder": "Adventurers",
     "subfolder": "",
@@ -460,6 +454,12 @@
     "folder": "Adventurers",
     "subfolder": "",
     "path": "Adventurers/MZ4250 - Minotaur Wizard Wand.glb"
+  },
+  {
+    "name": "MZ4250 - Minotaur on a Buffalo",
+    "folder": "Adventurers",
+    "subfolder": "",
+    "path": "Adventurers/MZ4250 - Minotaur on a Buffalo.glb"
   },
   {
     "name": "MZ4250 - Old Gnome Artificer",
@@ -1110,16 +1110,16 @@
     "path": "Icewind Dale - Rime of the Frostmaiden/MZ4250 - Dragon Chardalyn.glb"
   },
   {
-    "name": "MZ4250 - Frost Giant on Mammoth",
-    "folder": "Icewind Dale - Rime of the Frostmaiden",
-    "subfolder": "",
-    "path": "Icewind Dale - Rime of the Frostmaiden/MZ4250 - Frost Giant on Mammoth.glb"
-  },
-  {
     "name": "MZ4250 - Frost Giant Skeleton",
     "folder": "Icewind Dale - Rime of the Frostmaiden",
     "subfolder": "",
     "path": "Icewind Dale - Rime of the Frostmaiden/MZ4250 - Frost Giant Skeleton.glb"
+  },
+  {
+    "name": "MZ4250 - Frost Giant on Mammoth",
+    "folder": "Icewind Dale - Rime of the Frostmaiden",
+    "subfolder": "",
+    "path": "Icewind Dale - Rime of the Frostmaiden/MZ4250 - Frost Giant on Mammoth.glb"
   },
   {
     "name": "MZ4250 - Gnoll Vampire",
@@ -1218,16 +1218,16 @@
     "path": "Icewind Dale - Rime of the Frostmaiden/MZ4250 - VerbeegMarauder_BattleAxe.glb"
   },
   {
-    "name": "MZ4250 - VerbeegMarauder_spear",
-    "folder": "Icewind Dale - Rime of the Frostmaiden",
-    "subfolder": "",
-    "path": "Icewind Dale - Rime of the Frostmaiden/MZ4250 - VerbeegMarauder_spear.glb"
-  },
-  {
     "name": "MZ4250 - VerbeegMarauder_Sword",
     "folder": "Icewind Dale - Rime of the Frostmaiden",
     "subfolder": "",
     "path": "Icewind Dale - Rime of the Frostmaiden/MZ4250 - VerbeegMarauder_Sword.glb"
+  },
+  {
+    "name": "MZ4250 - VerbeegMarauder_spear",
+    "folder": "Icewind Dale - Rime of the Frostmaiden",
+    "subfolder": "",
+    "path": "Icewind Dale - Rime of the Frostmaiden/MZ4250 - VerbeegMarauder_spear.glb"
   },
   {
     "name": "MZ4250 - Werebear_FishingPole",
@@ -1758,18 +1758,6 @@
     "path": "Monster Manual/_Appendix A_ Miscellaneous Creatures/Bear Feral.glb"
   },
   {
-    "name": "Monsterprint - Wererat (crouching)",
-    "folder": "Monster Manual",
-    "subfolder": "L/Lycanthropes",
-    "path": "Monster Manual/L/Lycanthropes/Monsterprint - Wererat (crouching).glb"
-  },
-  {
-    "name": "Monsterprint - Wererat (standing)",
-    "folder": "Monster Manual",
-    "subfolder": "L/Lycanthropes",
-    "path": "Monster Manual/L/Lycanthropes/Monsterprint - Wererat (standing).glb"
-  },
-  {
     "name": "MZ4250 - Aarakocra (Black Eagle)",
     "folder": "Monster Manual",
     "subfolder": "A",
@@ -2142,16 +2130,16 @@
     "path": "Monster Manual/B/MZ4250 - Banshee Male_2025.glb"
   },
   {
-    "name": "MZ4250 - Barbed Devil",
-    "folder": "Monster Manual",
-    "subfolder": "D/Devils",
-    "path": "Monster Manual/D/Devils/MZ4250 - Barbed Devil.glb"
-  },
-  {
     "name": "MZ4250 - BarKeep",
     "folder": "Monster Manual",
     "subfolder": "_Appendix B_Misc NPCs",
     "path": "Monster Manual/_Appendix B_Misc NPCs/MZ4250 - BarKeep.glb"
+  },
+  {
+    "name": "MZ4250 - Barbed Devil",
+    "folder": "Monster Manual",
+    "subfolder": "D/Devils",
+    "path": "Monster Manual/D/Devils/MZ4250 - Barbed Devil.glb"
   },
   {
     "name": "MZ4250 - Barlgura",
@@ -3522,12 +3510,6 @@
     "path": "Monster Manual/G/MZ4250 - Ghost.glb"
   },
   {
-    "name": "MZ4250 - Ghost extra spooky",
-    "folder": "Monster Manual",
-    "subfolder": "G",
-    "path": "Monster Manual/G/MZ4250 - Ghost extra spooky.glb"
-  },
-  {
     "name": "MZ4250 - Ghost Female_2025",
     "folder": "Monster Manual",
     "subfolder": "G",
@@ -3538,6 +3520,12 @@
     "folder": "Monster Manual",
     "subfolder": "G",
     "path": "Monster Manual/G/MZ4250 - Ghost Male_2025.glb"
+  },
+  {
+    "name": "MZ4250 - Ghost extra spooky",
+    "folder": "Monster Manual",
+    "subfolder": "G",
+    "path": "Monster Manual/G/MZ4250 - Ghost extra spooky.glb"
   },
   {
     "name": "MZ4250 - Ghoul",
@@ -3930,6 +3918,12 @@
     "path": "Monster Manual/G/Goblins/Goblins Updated/MZ4250 - Goblin Warrior_melee_sword 2025.glb"
   },
   {
+    "name": "MZ4250 - Goblin Worg Rider",
+    "folder": "Monster Manual",
+    "subfolder": "G/Goblins/Goblins Updated/Goblin Worg Rider",
+    "path": "Monster Manual/G/Goblins/Goblins Updated/Goblin Worg Rider/MZ4250 - Goblin Worg Rider.glb"
+  },
+  {
     "name": "MZ4250 - Goblin with Bow",
     "folder": "Monster Manual",
     "subfolder": "G/Goblins/Goblins Updated",
@@ -3940,12 +3934,6 @@
     "folder": "Monster Manual",
     "subfolder": "G/Goblins/Goblins Updated",
     "path": "Monster Manual/G/Goblins/Goblins Updated/MZ4250 - Goblin with Crossbow.glb"
-  },
-  {
-    "name": "MZ4250 - Goblin Worg Rider",
-    "folder": "Monster Manual",
-    "subfolder": "G/Goblins/Goblins Updated/Goblin Worg Rider",
-    "path": "Monster Manual/G/Goblins/Goblins Updated/Goblin Worg Rider/MZ4250 - Goblin Worg Rider.glb"
   },
   {
     "name": "MZ4250 - Goose (Canadian)",
@@ -4368,16 +4356,16 @@
     "path": "Monster Manual/K/Kraken/MZ4250 - Kraken Body.glb"
   },
   {
-    "name": "MZ4250 - Kraken swimming",
-    "folder": "Monster Manual",
-    "subfolder": "K",
-    "path": "Monster Manual/K/MZ4250 - Kraken swimming.glb"
-  },
-  {
     "name": "MZ4250 - Kraken Tentacle",
     "folder": "Monster Manual",
     "subfolder": "K/Kraken",
     "path": "Monster Manual/K/Kraken/MZ4250 - Kraken Tentacle.glb"
+  },
+  {
+    "name": "MZ4250 - Kraken swimming",
+    "folder": "Monster Manual",
+    "subfolder": "K",
+    "path": "Monster Manual/K/MZ4250 - Kraken swimming.glb"
   },
   {
     "name": "MZ4250 - Kuo Toa with Whip",
@@ -4518,16 +4506,16 @@
     "path": "Monster Manual/D/Demons/MZ4250 - Marilith.glb"
   },
   {
-    "name": "MZ4250 - Marilith_alt",
-    "folder": "Monster Manual",
-    "subfolder": "D/Demons",
-    "path": "Monster Manual/D/Demons/MZ4250 - Marilith_alt.glb"
-  },
-  {
     "name": "MZ4250 - Marilith2_alt",
     "folder": "Monster Manual",
     "subfolder": "D/Demons",
     "path": "Monster Manual/D/Demons/MZ4250 - Marilith2_alt.glb"
+  },
+  {
+    "name": "MZ4250 - Marilith_alt",
+    "folder": "Monster Manual",
+    "subfolder": "D/Demons",
+    "path": "Monster Manual/D/Demons/MZ4250 - Marilith_alt.glb"
   },
   {
     "name": "MZ4250 - Mastiff",
@@ -4728,60 +4716,6 @@
     "path": "Monster Manual/M/MZ4250 - Mummy Male_2025.glb"
   },
   {
-    "name": "MZ4250 - Nalfeshnee",
-    "folder": "Monster Manual",
-    "subfolder": "D/Demons",
-    "path": "Monster Manual/D/Demons/MZ4250 - Nalfeshnee.glb"
-  },
-  {
-    "name": "MZ4250 - Needle Blight",
-    "folder": "Monster Manual",
-    "subfolder": "B/Blights",
-    "path": "Monster Manual/B/Blights/MZ4250 - Needle Blight.glb"
-  },
-  {
-    "name": "MZ4250 - Needle Blight 2",
-    "folder": "Monster Manual",
-    "subfolder": "B/Blights",
-    "path": "Monster Manual/B/Blights/MZ4250 - Needle Blight 2.glb"
-  },
-  {
-    "name": "MZ4250 - Needle Blight_2025",
-    "folder": "Monster Manual",
-    "subfolder": "B/Blights",
-    "path": "Monster Manual/B/Blights/MZ4250 - Needle Blight_2025.glb"
-  },
-  {
-    "name": "MZ4250 - Night Hag",
-    "folder": "Monster Manual",
-    "subfolder": "H/Hags",
-    "path": "Monster Manual/H/Hags/MZ4250 - Night Hag.glb"
-  },
-  {
-    "name": "MZ4250 - Nightmare",
-    "folder": "Monster Manual",
-    "subfolder": "N",
-    "path": "Monster Manual/N/MZ4250 - Nightmare.glb"
-  },
-  {
-    "name": "MZ4250 - Nightmare_alt",
-    "folder": "Monster Manual",
-    "subfolder": "N",
-    "path": "Monster Manual/N/MZ4250 - Nightmare_alt.glb"
-  },
-  {
-    "name": "MZ4250 - Nightmare_alt Mount",
-    "folder": "Monster Manual",
-    "subfolder": "N",
-    "path": "Monster Manual/N/MZ4250 - Nightmare_alt Mount.glb"
-  },
-  {
-    "name": "MZ4250 - Nothic",
-    "folder": "Monster Manual",
-    "subfolder": "N",
-    "path": "Monster Manual/N/MZ4250 - Nothic.glb"
-  },
-  {
     "name": "MZ4250 - NPC Commoner Barkeep",
     "folder": "Monster Manual",
     "subfolder": "_Appendix B_Misc NPCs",
@@ -4834,6 +4768,60 @@
     "folder": "Monster Manual",
     "subfolder": "_Appendix B_Misc NPCs",
     "path": "Monster Manual/_Appendix B_Misc NPCs/MZ4250 - NPC Guard with spear Red.glb"
+  },
+  {
+    "name": "MZ4250 - Nalfeshnee",
+    "folder": "Monster Manual",
+    "subfolder": "D/Demons",
+    "path": "Monster Manual/D/Demons/MZ4250 - Nalfeshnee.glb"
+  },
+  {
+    "name": "MZ4250 - Needle Blight",
+    "folder": "Monster Manual",
+    "subfolder": "B/Blights",
+    "path": "Monster Manual/B/Blights/MZ4250 - Needle Blight.glb"
+  },
+  {
+    "name": "MZ4250 - Needle Blight 2",
+    "folder": "Monster Manual",
+    "subfolder": "B/Blights",
+    "path": "Monster Manual/B/Blights/MZ4250 - Needle Blight 2.glb"
+  },
+  {
+    "name": "MZ4250 - Needle Blight_2025",
+    "folder": "Monster Manual",
+    "subfolder": "B/Blights",
+    "path": "Monster Manual/B/Blights/MZ4250 - Needle Blight_2025.glb"
+  },
+  {
+    "name": "MZ4250 - Night Hag",
+    "folder": "Monster Manual",
+    "subfolder": "H/Hags",
+    "path": "Monster Manual/H/Hags/MZ4250 - Night Hag.glb"
+  },
+  {
+    "name": "MZ4250 - Nightmare",
+    "folder": "Monster Manual",
+    "subfolder": "N",
+    "path": "Monster Manual/N/MZ4250 - Nightmare.glb"
+  },
+  {
+    "name": "MZ4250 - Nightmare_alt",
+    "folder": "Monster Manual",
+    "subfolder": "N",
+    "path": "Monster Manual/N/MZ4250 - Nightmare_alt.glb"
+  },
+  {
+    "name": "MZ4250 - Nightmare_alt Mount",
+    "folder": "Monster Manual",
+    "subfolder": "N",
+    "path": "Monster Manual/N/MZ4250 - Nightmare_alt Mount.glb"
+  },
+  {
+    "name": "MZ4250 - Nothic",
+    "folder": "Monster Manual",
+    "subfolder": "N",
+    "path": "Monster Manual/N/MZ4250 - Nothic.glb"
   },
   {
     "name": "MZ4250 - Nycaloth (Green)",
@@ -4992,16 +4980,16 @@
     "path": "Monster Manual/O/MZ4250 - Owlbear.glb"
   },
   {
-    "name": "MZ4250 - Owlbear_alt",
-    "folder": "Monster Manual",
-    "subfolder": "O",
-    "path": "Monster Manual/O/MZ4250 - Owlbear_alt.glb"
-  },
-  {
     "name": "MZ4250 - Owlbear_Snowy",
     "folder": "Monster Manual",
     "subfolder": "O",
     "path": "Monster Manual/O/MZ4250 - Owlbear_Snowy.glb"
+  },
+  {
+    "name": "MZ4250 - Owlbear_alt",
+    "folder": "Monster Manual",
+    "subfolder": "O",
+    "path": "Monster Manual/O/MZ4250 - Owlbear_alt.glb"
   },
   {
     "name": "MZ4250 - Ox_Black",
@@ -6154,6 +6142,18 @@
     "folder": "Monster Manual",
     "subfolder": "Z",
     "path": "Monster Manual/Z/MZ4250 - Zombie Walker Male 03.glb"
+  },
+  {
+    "name": "Monsterprint - Wererat (crouching)",
+    "folder": "Monster Manual",
+    "subfolder": "L/Lycanthropes",
+    "path": "Monster Manual/L/Lycanthropes/Monsterprint - Wererat (crouching).glb"
+  },
+  {
+    "name": "Monsterprint - Wererat (standing)",
+    "folder": "Monster Manual",
+    "subfolder": "L/Lycanthropes",
+    "path": "Monster Manual/L/Lycanthropes/Monsterprint - Wererat (standing).glb"
   },
   {
     "name": "PolyGrimm - Frogfolk Druid",
