@@ -37,7 +37,7 @@
       min-height: 100vh;
     }
 
-    /* ── Header ── */
+    /* Header */
     header {
       position: sticky;
       top: 0;
@@ -149,7 +149,7 @@
       border-bottom: 1px solid var(--border);
     }
 
-    /* ── Grid ── */
+    /* Grid */
     #grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -162,7 +162,7 @@
     @media (min-width: 960px) { #grid { grid-template-columns: repeat(5, 1fr); gap: 14px; padding: 14px; } }
     @media (min-width: 1200px) { #grid { grid-template-columns: repeat(6, 1fr); } }
 
-    /* ── Card ── */
+    /* Card */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -254,7 +254,7 @@
       opacity: 0.8;
     }
 
-    /* ── Modal ── */
+    /* Modal */
     #modal {
       display: none;
       position: fixed;
@@ -371,7 +371,7 @@
       background: radial-gradient(ellipse at center, #1a1040 0%, #08080f 100%);
     }
 
-    /* ── Empty state ── */
+    /* Empty state */
     #empty {
       display: none;
       text-align: center;
@@ -382,7 +382,7 @@
     #empty .empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
     #empty p { font-size: 0.9rem; }
 
-    /* ── Loading overlay ── */
+    /* Loading overlay */
     #loading-overlay {
       position: fixed;
       inset: 0;
@@ -417,7 +417,7 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* ── Scrollbar ── */
+    /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -483,7 +483,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-// ─── Config ────────────────────────────────────────────────────
+// ---
 const CDN_BASE = 'https://cdn.jsdelivr.net/gh/theripper93/canvas3dtokencompendium@master/miniatures/_Colorized/';
 const DRACO_PATH = 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/';
 
@@ -492,21 +492,21 @@ const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath(DRACO_PATH);
 const MAX_CARD_RENDERERS = 8; // max concurrent card WebGL contexts
 
-// ─── State ─────────────────────────────────────────────────────
+// ---
 let allModels = [];
 let filtered = [];
 let activeCardRenderers = new Map(); // el -> {renderer, animId}
 let modalScene = null, modalRenderer = null, modalControls = null, modalAnimId = null;
 let currentModalPath = null;
 
-// ─── Fetch manifest ─────────────────────────────────────────────
+// ---
 async function loadManifest() {
   const resp = await fetch('manifest.json');
   if (!resp.ok) throw new Error('Failed to load manifest.json');
   return resp.json();
 }
 
-// ─── Three.js helpers ──────────────────────────────────────────
+// ---
 function makeScene() {
   const scene = new THREE.Scene();
   // Ambient + directional lights
@@ -548,7 +548,7 @@ function fitModelToCamera(object, camera) {
   return { center, dist };
 }
 
-// ─── Card renderer ─────────────────────────────────────────────
+// ---
 function disposeCardRenderer(el) {
   const rec = activeCardRenderers.get(el);
   if (!rec) return;
@@ -609,7 +609,7 @@ function startCardRender(el, path) {
   });
 }
 
-// ─── IntersectionObserver for lazy card loading ─────────────────
+// ---
 const cardObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     const el = entry.target;
@@ -628,7 +628,7 @@ const cardObserver = new IntersectionObserver((entries) => {
   });
 }, { rootMargin: '120px 0px', threshold: [0, 0.1] });
 
-// ─── Modal viewer ──────────────────────────────────────────────
+// ---
 function initModalRenderer() {
   if (modalRenderer) return;
   const canvas = document.getElementById('modal-canvas');
@@ -731,7 +731,7 @@ function closeModal() {
   if (modalControls) { modalControls.dispose(); modalControls = null; }
 }
 
-// ─── Grid rendering ────────────────────────────────────────────
+// ---
 function createCard(model) {
   const card = document.createElement('div');
   card.className = 'card';
@@ -784,7 +784,7 @@ function renderGrid() {
   grid.querySelectorAll('.card').forEach(c => cardObserver.observe(c));
 }
 
-// ─── Filtering & sorting ───────────────────────────────────────
+// ---
 function applyFilters() {
   const q = document.getElementById('search').value.trim().toLowerCase();
   const folder = document.getElementById('folder-select').value;
@@ -812,7 +812,7 @@ function debounce(fn, ms) {
   debounceTimer = setTimeout(fn, ms);
 }
 
-// ─── Init ──────────────────────────────────────────────────────
+// ---
 async function init() {
   try {
     allModels = await loadManifest();
@@ -852,4 +852,16 @@ async function init() {
     // Initial render
     applyFilters();
 
-    /
+    // Hide loading overlay
+    document.getElementById('loading-overlay').style.display = 'none';
+  } catch (err) {
+    console.error('DigiDM init error:', err);
+    const ov = document.getElementById('loading-overlay');
+    if (ov) ov.innerHTML = `<div style="text-align:center;padding:2rem"><p style="color:#f87171;font-size:1.1rem">⚠ Failed to load manifest.</p><p style="color:#94a3b8;margin-top:.5rem">Open DevTools console for details.</p></div>`;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
