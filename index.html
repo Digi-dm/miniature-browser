@@ -283,6 +283,13 @@
       position: relative;
     }
 
+    /* Full-screen modal on mobile */
+    @media (max-width: 600px) {
+      #modal { padding: 0; align-items: stretch; justify-content: stretch; }
+      .modal-box { max-width: 100%; max-height: 100%; height: 100%; border-radius: 0; border: none; }
+      #modal-canvas-wrap { min-height: 0; }
+    }
+
     .modal-header {
       padding: 14px 16px;
       display: flex;
@@ -856,12 +863,4 @@ async function init() {
     document.getElementById('loading-overlay').style.display = 'none';
   } catch (err) {
     console.error('DigiDM init error:', err);
-    const ov = document.getElementById('loading-overlay');
-    if (ov) ov.innerHTML = `<div style="text-align:center;padding:2rem"><p style="color:#f87171;font-size:1.1rem">⚠ Failed to load manifest.</p><p style="color:#94a3b8;margin-top:.5rem">Open DevTools console for details.</p></div>`;
-  }
-}
-
-init();
-</script>
-</body>
-</html>
+    const ov = document.getElementB
