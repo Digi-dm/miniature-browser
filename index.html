@@ -79,6 +79,13 @@ header { position: sticky; top: 0; z-index: 100; background: rgba(15,15,26,0.95)
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+#modal-anim-bar { display: none; padding: 7px 12px; border-top: 1px solid var(--border); background: rgba(22,33,62,0.9); align-items: center; gap: 8px; flex-shrink: 0; }
+#modal-anim-bar.show { display: flex; }
+.anim-btn { background: rgba(255,255,255,0.08); border: none; color: var(--text); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s; }
+.anim-btn:hover { background: rgba(255,255,255,0.18); }
+#anim-label { flex: 1; font-size: 0.73rem; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
+.anim-counter { font-size: 0.67rem; color: var(--accent2); flex-shrink: 0; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -117,6 +124,13 @@ header { position: sticky; top: 0; z-index: 100; background: rgba(15,15,26,0.95)
       <canvas id="modal-canvas"></canvas>
       <div class="modal-loader" id="modal-loader"><div class="spinner"></div></div>
     </div>
+        <div id="modal-anim-bar">
+      <button class="anim-btn" id="anim-prev" title="Previous animation">&#x25C4;</button>
+      <span id="anim-label"></span>
+      <span class="anim-counter" id="anim-counter"></span>
+      <button class="anim-btn" id="anim-next" title="Next animation">&#x25BA;</button>
+      <button class="anim-btn" id="anim-playpause" title="Play / Pause">&#x23F8;</button>
+    </div>
     <div class="modal-footer">
       <span class="modal-hint">&#x1F5B1; Drag to rotate &middot; Scroll to zoom</span>
       <button class="modal-copy" id="copy-path-btn">Copy Path</button>
@@ -137,6 +151,7 @@ dracoLoader.setDecoderPath(DRACO_PATH);
 let allModels = [], filtered = [];
 let modalScene = null, modalRenderer = null, modalControls = null, modalAnimId = null;
 let currentModalPath = null, modalHistoryPushed = false;
+let modalMixer = null, modalClock = null, modalAnims = [], modalAnimIdx = 0, modalAnimAction = null, modalAnimPaused = false;
 
 window.addEventListener('popstate', () => {
   if (document.getElementById('modal').classList.contains('open')) {
@@ -183,6 +198,45 @@ function fitModelToCamera(object, camera) {
   return { center, dist };
 }
 
+
+function updateAnimUI() {
+  const anim = modalAnims[modalAnimIdx];
+  const label = document.getElementById('anim-label');
+  const counter = document.getElementById('anim-counter');
+  const pp = document.getElementById('anim-playpause');
+  if (label) label.textContent = anim ? (anim.name || 'Animation ' + (modalAnimIdx + 1)) : '';
+  if (counter) counter.textContent = modalAnims.length > 1 ? (modalAnimIdx + 1) + ' / ' + modalAnims.length : '';
+  if (pp) pp.textContent = modalAnimPaused ? '►' : '⏸';
+}
+
+function playAnim(idx) {
+  if (!modalMixer || !modalAnims.length) return;
+  modalAnimIdx = ((idx % modalAnims.length) + modalAnims.length) % modalAnims.length;
+  if (modalAnimAction) { modalAnimAction.fadeOut(0.15); }
+  modalAnimAction = modalMixer.clipAction(modalAnims[modalAnimIdx]);
+  modalAnimAction.reset().fadeIn(0.15).play();
+  if (modalAnimPaused) modalAnimAction.paused = true;
+  updateAnimUI();
+}
+
+function setupModalAnims(gltfScene, anims) {
+  const bar = document.getElementById('modal-anim-bar');
+  if (modalMixer) { modalMixer.stopAllAction(); modalMixer = null; }
+  modalAnims = (anims && anims.length) ? anims : [];
+  modalAnimIdx = 0; modalAnimPaused = false; modalAnimAction = null; modalClock = null;
+  if (!modalAnims.length) { if (bar) bar.classList.remove('show'); return; }
+  modalMixer = new THREE.AnimationMixer(gltfScene);
+  modalClock = new THREE.Clock();
+  if (bar) bar.classList.add('show');
+  playAnim(0);
+}
+
+function cleanupModalAnims() {
+  if (modalMixer) { modalMixer.stopAllAction(); modalMixer = null; }
+  modalClock = null; modalAnims = []; modalAnimAction = null; modalAnimPaused = false;
+  const bar = document.getElementById('modal-anim-bar');
+  if (bar) bar.classList.remove('show');
+}
 function initModalRenderer() {
   if (modalRenderer) return;
   const canvas = document.getElementById('modal-canvas');
@@ -236,13 +290,14 @@ function openModal(model) {
   loader.setDRACOLoader(dracoLoader);
   loader.load(url, gltf => {
     modalScene.add(gltf.scene);
+    setupModalAnims(gltf.scene, gltf.animations);
     const { dist } = fitModelToCamera(gltf.scene, camera);
     modalControls.target.set(0,0,0);
     modalControls.minDistance = dist * 0.15;
     modalControls.maxDistance = dist * 10;
     modalControls.update();
     document.getElementById('modal-loader').style.display = 'none';
-    function animate() { modalAnimId=requestAnimationFrame(animate); modalControls.update(); modalRenderer.render(modalScene,camera); }
+    function animate() { modalAnimId=requestAnimationFrame(animate); modalControls.update(); if (modalMixer && modalClock) modalMixer.update(modalClock.getDelta()); modalRenderer.render(modalScene,camera); }
     animate();
   }, undefined, err => {
     console.error('Modal load error:', model.path, err);
@@ -257,6 +312,7 @@ function closeModal() {
   document.body.style.overflow = '';
   if (modalAnimId) { cancelAnimationFrame(modalAnimId); modalAnimId = null; }
   if (modalControls) { modalControls.dispose(); modalControls = null; }
+  cleanupModalAnims();
   if (modalHistoryPushed) { modalHistoryPushed = false; history.back(); }
 }
 
@@ -320,6 +376,14 @@ async function init() {
         btn.textContent='✓ Copied!';
         setTimeout(()=>{btn.textContent='Copy Path';},1800);
       });
+    });
+    document.getElementById('anim-prev').addEventListener('click', () => playAnim(modalAnimIdx - 1));
+    document.getElementById('anim-next').addEventListener('click', () => playAnim(modalAnimIdx + 1));
+    document.getElementById('anim-playpause').addEventListener('click', () => {
+      if (!modalAnimAction) return;
+      modalAnimPaused = !modalAnimPaused;
+      modalAnimAction.paused = modalAnimPaused;
+      updateAnimUI();
     });
     applyFilters();
     document.getElementById('loading-overlay').style.display='none';
